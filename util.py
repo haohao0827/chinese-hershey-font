@@ -67,7 +67,7 @@ def online(p0,p1,p2):
     elif abs(d1 + d2 - d0) < ep:
         od = 0
     else:
-        print p0,p1,p2,d0,d1,d2
+        print(p0,p1,p2,d0,d1,d2)
 
     return od
 

@@ -236,7 +236,7 @@ def build(font = "fonts/Heiti.ttc"):
     w,h = build_params.width, build_params.height
     result = ""
     if not len(build_params.output):
-        print "{"
+        print("{")
     else:
         file = open(build_params.output,"w")
         file.close()
@@ -245,30 +245,30 @@ def build(font = "fonts/Heiti.ttc"):
     def perc(x):
         return float("%.3f" % x)
     for i in range(build_params.first,build_params.last+1):
-        ch = unichr(i)
+        ch = chr(i)
         ssegs = scanRast(rastBox(ch,
             w=w,h=h,f=font),
             strw=build_params.strw,
             ngradient=build_params.ngradient
         )
         for j in range (0,len(ssegs)):
-            ssegs[j] = map(
+            ssegs[j] = list(map(
                 lambda x : (perc(x[0]/float(w)),perc(x[1]/float(h))),
                 ssegs[j]
-                )
+                ))
         ind = "U+"+hex(i)[2:].upper()
         entry = "  \""+ind+"\":"+json.dumps(ssegs)+(
             "," if i != build_params.last else "")
         result += entry
         if not len(build_params.output):
-            print entry
+            print(entry)
         else:
-            print ch,
+            print(ch, end=' ')
             file.write(entry+"\n")
         sys.stdout.flush()
 
     if not len(build_params.output):
-        print "}"
+        print("}")
     else:
         file.write("}")
         file.close()
@@ -286,16 +286,16 @@ class test_params:
 
 # test algorithm on a random string
 # and show result as image
-def test(fonts = ["/System/Library/Fonts/STHeiti Light.ttc"]):
+def test(fonts = ["C:\Windows\Fonts\simsun.ttc"]):
     w,h = test_params.width, test_params.height
-    corpus = test_params.corpus.decode('utf-8') if len(test_params.corpus) else open(
-        "teststrings.txt",'r').readlines()[-1].decode('utf-8')
+    corpus = test_params.corpus if len(test_params.corpus) else open(
+        "teststrings.txt",'r', encoding='utf-8').readlines()[-1]
     IM = Image.new("RGB",(w*test_params.nsample,h*len(fonts)))
     DR = ImageDraw.Draw(IM)
     randidx = random.randrange(0,len(corpus)//test_params.nsample+1)
     for i in range(0,test_params.nsample):
         ch = corpus[(randidx*test_params.nsample+i)%len(corpus)]
-        print ch,
+        print(ch, end=' ')
         sys.stdout.flush()
         for j in range(0,len(fonts)):
             rbox = rastBox(ch,f=fonts[j],w=w,h=h)
